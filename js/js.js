@@ -12,6 +12,7 @@ $(document).ready( function() {
 	var date = year.toString() + ((month < 10) ? '0' + month.toString() : month.toString()) + ((day < 10) ? '0' + day.toString() : day.toString());
 	
 	var url = 'http://api.trakt.tv/user/calendar/shows.json/' + api_key + '/' + username + '/' + date + '/' + search_length;
+	var upcoming_url = 'http://api.trakt.tv/user/calendar/shows.json/' + api_key + '/' + username + '/?days=14';
 	console.log(day);
 	console.log(url);
 	$.ajax( {
@@ -20,6 +21,14 @@ $(document).ready( function() {
 		dataType: 'jsonp',
 		url: url,
 		success: showParse
+	});
+
+	$.ajax( {
+		type: 'POST',
+		crossDomain: true,
+		dataType: 'jsonp',
+		url: upcoming_url,
+		success: upcomingShowParse
 	});
 
 });
@@ -58,6 +67,30 @@ function showParse(data)
 			$('<img src="' + episodes.show.images.poster + '" width="300" height="300">').load(function() {$(this).appendTo('#show-' + i + "-" + j + '-art');});
 		});
 		$('#show-container').prepend(html);
+
+	});
+
+	console.log(data);
+}
+
+function upcomingShowParse(data)
+{
+	$.each(data, function(i, dates){
+		 var html = "<div class='row'>" +
+	 			"<div class='large-12 columns'>" +
+	 				"<h4>" + dates.date + "</4>" +
+	 			"</div>" +
+	 		"</div>";
+		$.each(dates.episodes, function(j, episodes){
+			html += "<div class='row'>" +
+						"<div class='small-12 columns'>" +
+							"<h5><a href='" + episodes.show.url + "'>" + episodes.show.title + "</a>" + 
+								"<small> S" + episodes.episode.season + 'E' + episodes.episode.number + "</small>" +
+							"</h3>" +
+						"</div>" +
+					"</div>";
+		});
+		$('#upcoming-container').prepend(html);
 
 	});
 
