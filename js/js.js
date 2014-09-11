@@ -90,7 +90,7 @@ function upcomingShowParse(data)
 						"</div>" +
 					"</div>";
 		});
-		$('#upcoming-container').prepend(html);
+		$('#upcoming-container').append(html);
 
 	});
 
